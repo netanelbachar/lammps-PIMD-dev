@@ -13,20 +13,21 @@
 
 #ifdef FIX_CLASS
 
-FixStyle(pimd,FixPIMD)
+FixStyle(pimdb,FixPIMDB)
 
 #else
 
-#ifndef FIX_PIMD_H
-#define FIX_PIMD_H
+#ifndef FIX_PIMDB_H
+#define FIX_PIMDB_H
 
 #include "fix.h"
+#include <vector>
 
 namespace LAMMPS_NS {
 
-class FixPIMD : public Fix {
+class FixPIMDB : public Fix {
  public:
-  FixPIMD(class LAMMPS *, int, char **);
+  FixPIMDB(class LAMMPS *, int, char **);
 
   int setmask();
 
@@ -35,6 +36,7 @@ class FixPIMD : public Fix {
   void post_force(int);
   void initial_integrate(int);
   void final_integrate();
+  void end_of_step();
 
   double memory_usage();
   void grow_arrays(int);
@@ -60,8 +62,12 @@ class FixPIMD : public Fix {
   int x_last, x_next;
 
   void spring_force();
+  double Evaluate_Ekn(const int n, const int k);
+  std::vector<double> Evaluate_dEkn_on_atom(const int n, const int k, const int atomnum);
+  std::vector<double> Evaluate_VBn(std::vector <double>& V, const int n);
+  std::vector<std::vector<double>> Evaluate_dVBn(const std::vector <double>& V, const std::vector <double>& save_E_kn, const int n);
 
-  /* fictitious mass */
+  /* fictious mass */
 
   double fmass, *mass;
 
@@ -107,7 +113,10 @@ class FixPIMD : public Fix {
   void nhc_update_v();
   void nhc_update_x();
 
+  std::vector<double> E_kn;
+  std::vector<double> V;
   double virial;
+
 };
 
 
